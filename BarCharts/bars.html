@@ -1,0 +1,282 @@
+<!DOCTYPE html>
+<meta charset="utf-8">
+<style>
+
+.bar:hover {
+  fill: teal;
+}
+
+.axis {
+  font: 10px sans-serif;
+}
+
+.axis path,
+.axis line {
+  fill: none;
+  stroke: #000;
+  shape-rendering: crispEdges;
+}
+
+</style>
+<body>
+<script src="http://d3js.org/d3.v3.min.js"></script>
+<script>
+
+var margin1 = {top: 20, right: 20, bottom: 50, left: 40},
+    width1 = 500 - margin1.left - margin1.right,
+    height1 = 400 - margin1.top - margin1.bottom;
+
+var x1 = d3.scale.ordinal()
+    .rangeRoundBands([0, width1], .1);
+
+var y1 = d3.scale.linear()
+    .range([height1, 0]);
+
+var xAxis1 = d3.svg.axis()
+    .scale(x1)
+    .orient("bottom");
+
+var yAxis1 = d3.svg.axis()
+    .scale(y1)
+    .orient("left")
+    .ticks(10);
+
+var svg1 = d3.select("body").append("svg")
+    .attr("width", width1 + margin1.left + margin1.right)
+    .attr("height", height1 + margin1.top + margin1.bottom)
+	.append("g")
+    .attr("transform", "translate(" + margin1.left + "," + margin1.top + ")");
+
+d3.json("5songs.json", function(error, data1) {
+  x1.domain(data1.map(function(d) { return d.Song; }));
+  y1.domain([0, d3.max(data1, function(d) { return d.Happiness; })]);
+console.log(x1);
+  svg1.append("g")
+      .attr("class", "x axis")
+      .attr("transform", "translate(0," + height1 + ")")
+      .call(xAxis1);
+
+  svg1.append("g")
+      .attr("class", "y axis")
+      .call(yAxis1)
+	  .append("text")
+      .attr("transform", "rotate(-90)")
+      .attr("y", -40)
+      .attr("dy", ".71em")
+      .style("text-anchor", "end")
+      .text("Happiness");
+
+  svg1.append("text")      // text label for the x axis
+        .attr("x", 400 )
+        .attr("y", height1+40 )
+        .style("text-anchor", "middle")
+        .text("Song title");
+		
+  svg1.selectAll(".bar")
+      .data(data1)
+	  .enter().append("rect")
+      .attr("class", "bar")
+      .attr("x", function(d) { return x1(d.Song); })
+      .attr("width", x1.rangeBand()-10)
+      .attr("y", function(d) { return y1(d.Happiness); })
+      .attr("height", function(d) { return height1 - y1(d.Happiness); })
+	  .attr("fill","#74c476");
+
+});
+
+</script>
+<script>
+
+var margin2 = {top: 20, right: 20, bottom: 50, left: 40},
+    width2 = 500 - margin2.left - margin2.right,
+    height2 = 400 - margin2.top - margin2.bottom;
+
+var x2 = d3.scale.ordinal()
+    .rangeRoundBands([0, width2], .1);
+
+var y2 = d3.scale.linear()
+    .range([height2, 0]);
+
+var xAxis2 = d3.svg.axis()
+    .scale(x2)
+    .orient("bottom")
+	.ticks(5);
+
+var yAxis2 = d3.svg.axis()
+    .scale(y2)
+    .orient("left")
+    .ticks(10);
+
+var svg2 = d3.select("body").append("svg")
+    .attr("width", width2 + margin2.left + margin2.right)
+    .attr("height", height2 + margin2.top + margin2.bottom)
+	.append("g")
+    .attr("transform", "translate(" + margin2.left + "," + margin2.top + ")");
+
+d3.json("5songs.json", function(error, data2) {
+  x2.domain(data2.map(function(d) { return d.Song; }));
+  y2.domain([0, d3.max(data2, function(d) { return 60+parseInt(d.loudness); })]);
+console.log(x2);
+  svg2.append("g")
+      .attr("class", "x axis")
+      .attr("transform", "translate(0," + height2 + ")")
+      .call(xAxis2);
+
+  svg2.append("g")
+      .attr("class", "y axis")
+      .call(yAxis2)
+	  .append("text")
+      .attr("transform", "rotate(-90)")
+      .attr("y", -40)
+      .attr("dy", ".71em")
+      .style("text-anchor", "end")
+      .text("Loudness(db)");
+
+  svg2.append("text")      // text label for the x axis
+        .attr("x",400 )
+        .attr("y",height2+40 )
+        .style("text-anchor", "middle")
+        .text("Song title");
+		
+  svg2.selectAll(".bar")
+      .data(data2)
+	  .enter().append("rect")
+      .attr("class", "bar")
+      .attr("x", function(d) { return x2(d.Song); })
+      .attr("width", x2.rangeBand()-10)
+      .attr("y", function(d) { return y2(60+parseInt(d.loudness)); })
+      .attr("height", function(d) { return height2 - y2(60+parseInt(d.loudness)); })
+	  .attr("fill","#feb24c");
+
+});
+
+</script>
+
+<h3> Acoustics Graph </h3>
+<script>
+
+var margin = {top: 20, right: 20, bottom: 30, left: 40},
+    width = 1100 - margin.left - margin.right,
+    height = 500 - margin.top - margin.bottom;
+
+var x0 = d3.scale.ordinal()
+    .rangeRoundBands([0, width], .3);
+
+var x = d3.scale.ordinal();
+
+var y = d3.scale.linear()
+    .range([height, 0]);
+
+var color = d3.scale.ordinal()
+	.range(["#7fcdbb", "#41b6c4", "#1d91c0", "#225ea8", "#0c2c84"]);
+
+var xAxis = d3.svg.axis()
+    .scale(x0)
+    .orient("bottom");
+
+var yAxis = d3.svg.axis()
+    .scale(y)
+    .orient("left")
+    .ticks(11);
+
+var svg3 = d3.select("body").append("svg")
+    .attr("width", width + margin.left + margin.right)
+    .attr("height", height + margin.top + margin.bottom)
+  .append("g")
+    .attr("transform", "translate(" + margin.left + "," + margin.top + ")");
+
+d3.json("5songs.json", function(error, data) {
+var chart_data = [];
+chart_data[0] = {};
+chart_data[1] = {};
+chart_data[2] = {};
+chart_data[3] = {};
+chart_data[4] = {};
+chart_data[5] = {};
+chart_data[0]["Feature"] = "danceability";
+chart_data[1]["Feature"] = "energy";
+chart_data[2]["Feature"] = "speechiness";
+chart_data[3]["Feature"] = "liveness";
+chart_data[4]["Feature"] = "acousticness";
+chart_data[5]["Feature"] = "valence";
+for (i = 0; i< data.length; i++) {
+	var song = data[i]["Song"];
+	chart_data[0][song] = data[i]["danceability"]
+	chart_data[1][song] = data[i]["energy"]
+	chart_data[2][song] = data[i]["speechiness"]
+	chart_data[3][song] = data[i]["liveness"]
+	chart_data[4][song] = data[i]["acousticness"]
+	chart_data[5][song] = data[i]["valence"]
+}
+
+var objectNames = d3.keys(chart_data[0]).filter(function(key) { return key !== "Feature"; });
+chart_data.forEach(function(d) {
+	d.features = objectNames.map(function(feature) { return {feature: feature, value: +d[feature]}; });
+	});
+x0.domain(chart_data.map(function(d) { return d.Feature; }));
+x.domain(objectNames).rangeRoundBands([0, x0.rangeBand()]);
+y.domain([0, d3.max(chart_data, function(d) {
+console.log(d.features);
+	return d3.max(d.features, function(d) {
+			return d.value; 
+			}); 
+		})]);
+  
+  svg3.append("g")
+      .attr("class", "x axis")
+      .attr("transform", "translate(0," + height + ")")
+      .call(xAxis);
+
+  svg3.append("g")
+      .attr("class", "y axis")
+      .call(yAxis)
+    .append("text")
+      .attr("transform", "rotate(-90)")
+      .attr("y", -40)
+      .attr("dy", ".71em")
+      .style("text-anchor", "middle")
+      .text("Values");
+
+	   svg3.append("text")      // text label for the x axis
+        .attr("x",990 )
+        .attr("y",height+30 )
+        .style("text-anchor", "middle")
+        .text("Acoustic Attributes");
+		
+  var state = svg3.selectAll(".feature")
+      .data(chart_data)
+    .enter().append("g")
+      .attr("class", "g")
+      .attr("transform", function(d) { return "translate(" + x0(d.Feature) + ",0)"; });
+
+  state.selectAll("rect")
+      .data(function(d) { return d.features; })
+    .enter().append("rect")
+      .attr("width", x.rangeBand())
+      .attr("x", function(d) { return x(d.feature); })
+      .attr("y", function(d) { return y(d.value); })
+      .attr("height", function(d) { return height - y(d.value); })
+      .style("fill", function(d) { return color(d.feature); });
+
+  var legend = svg3.selectAll(".legend")
+      .data(objectNames.slice().reverse())
+    .enter().append("g")
+      .attr("class", "legend")
+      .attr("transform", function(d, i) { return "translate(0," + i * 18 + ")"; });
+
+  legend.append("rect")
+      .attr("x", width)
+      .attr("width", 15)
+      .attr("height", 15)
+      .style("fill", color);
+
+  legend.append("text")
+      .attr("x", width - 10)
+      .attr("y", 7)
+      .attr("dy", ".35em")
+      .style("text-anchor", "end")
+      .text(function(d) { return d; });
+
+});
+
+</script>

@@ -1,0 +1,161 @@
+
+<!DOCTYPE html>
+<meta charset="utf-8">
+<style>
+.node {
+  stroke: #fff;
+  stroke-width: 1.5px;
+}
+
+.link {
+  stroke: #999;
+  stroke-opacity: .5;
+}
+
+text {
+  font: 11px sans-serif blue;
+  pointer-events: none;
+}
+
+.d3-tip {
+  line-height: 1;
+  padding: 12px;
+  background: rgba(0, 0, 0, 0.7);
+  color: #fff;
+  border-radius: 2px;
+}
+
+</style>
+
+<head>
+<title>Victor Hugo Had No Internet</title>
+</head>
+
+<body>
+<script src="http://d3js.org/d3.v3.min.js"></script>
+<script type="text/javascript" src="/Q1/d3/d3-tip.js"></script>
+<script>
+
+//Size of region to render on
+var width = 1200,
+    height = 600,
+	rd = 5;
+
+//D3 force directed layout
+//Try playing with the charge and link distance
+var force = d3.layout.force()
+    .charge(-400)
+    .linkDistance(100)
+    .size([width, height]);
+
+//Add our canvas
+var svg = d3.select("body").append("svg")
+    .attr("width", width)
+    .attr("height", height);
+
+var texttip = d3.tip()
+    .attr("class", "d3-tip")
+    .html(function(d) { return "<strong>Name: </strong>" + d.name + "<br><strong> Group: </strong>" + d.group + "<br><strong> Coolness: </strong>" +  d.coolness; })
+    .direction('sw')
+    .offset([0, 3]);
+	
+	svg.call(texttip)
+	
+//Select the miserables data ;)
+d3.json("miserables.json", function(error, graph) {
+  force
+      .nodes(graph.nodes)
+      .links(graph.links)
+      .start();
+
+//Add the links
+var link = svg.selectAll(".link")
+      .data(graph.links)
+      .enter().append("line")
+      .attr("class", "link")
+      .style("stroke-width", function(d) { return Math.sqrt(d.value); });
+
+//Add the nodes	  
+var nodes = svg.selectAll("g.node")
+		.data(graph.nodes)
+		.enter()
+		.append('g');
+
+var node = nodes.append('circle')
+	.attr("class","node")
+	//.attr("r", 5)
+	//Following could be used for linearly scaling the nodes
+	/*.attr("r", function(d) {
+		return d.coolness/10;
+		})*/
+	//Folloing snipet of code is for scaling the radii by sqrt of the coleness factor.
+	.attr("r", function(d) {
+		return Math.sqrt(d.coolness); })
+	.attr("fill", function(d) {
+		return "rgb(0, " +(d.group * 30) + ",0)"; 
+		})
+	.on("dblclick", dblclick)
+	
+		.on('mouseover', texttip.show)
+		.on('mouseout', texttip.hide)
+	.call(force.drag);
+	
+var labels = nodes.append("text")
+		.attr("x", 10)
+		.attr("dy", ".35em")
+		.attr("fill", "purple")
+		.text(function(d) { if (d.coolness >25) {return d.name; } });
+
+//Update stuff for animation:
+//   This takes the physics simulation for the force directed graph and
+//   sets the location of the nodes and edges to the new positions
+  force.on("tick", function() {
+    link.attr("x1", function(d) { return d.source.x; })
+        .attr("y1", function(d) { return d.source.y; })
+        .attr("x2", function(d) { return d.target.x; })
+        .attr("y2", function(d) { return d.target.y; });
+  /*
+	nodes.attr("transform", function(d) {
+		return 'translate(' + [d.x, d.y] + ')';
+		});*/
+		
+	nodes.attr("transform", function(d) {
+		d.x = Math.max(rd, Math.min(width - rd, d.x));
+		d.y = Math.max(rd, Math.min(height - rd, d.y));
+		return 'translate(' + [d.x, d.y] + ')';
+	});
+	
+});
+
+function dblclick(d) {
+	if (d.fixed == true) {
+		console.log("Already pinned. Un-pinning now.")
+		d3.select(this)
+		.attr("r", function(d) {
+			return Math.sqrt(d.coolness); })
+		.attr("fill", function(d) {
+			return "rgb(0, " +(d.group * 30) + ",0)"; 
+		})
+		.classed("fixed", d.fixed = false);
+		} 
+	else {
+		console.log("Not pinned. Pinning now!")
+		d3.select(this)
+		.attr("fill", "red")
+		.attr("r", function(d) {
+			return Math.sqrt(d.coolness * 2); })
+		.classed("fixed", d.fixed = true);
+		}
+	}
+/* .d3-tip {
+  line-height: 1;
+  font-weight: bold;
+  padding: 12px;
+  background: rgba(0, 0, 0, 0.8);
+  color: #fff;
+  border-radius: 2px;
+}
+*/
+
+});
+</script>

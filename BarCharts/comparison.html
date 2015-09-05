@@ -1,0 +1,350 @@
+<!DOCTYPE html>
+<meta charset="utf-8">
+<style>
+
+body {
+  font: 10px sans-serif;
+}
+
+.axis path,
+.axis line {
+  fill: none;
+  stroke: #000;
+  shape-rendering: crispEdges;
+}
+
+.line {
+  fill: none;
+  stroke: green;
+  stroke-width: 2px;
+}
+
+</style>
+<body>
+<script src="http://d3js.org/d3.v3.min.js"></script>
+
+<h2> <b> Comparison of Songs in 5 different countries based on the average of Song Quality, Points, Duration, Tempo and Time Signature for 10 randomly picked songs in each country.</b></h2>
+<script>
+var margin = {top: 20, right: 20, bottom: 50, left: 40},
+    width = 300 - margin.left - margin.right,
+    height = 300 - margin.top - margin.bottom;
+
+var x = d3.scale.ordinal()
+    .rangeRoundBands([0, width], .1);
+
+var y = d3.scale.linear()
+    .range([height, 0]);
+
+var xAxis = d3.svg.axis()
+    .scale(x)
+    .orient("bottom")
+	.ticks(5);
+
+var yAxis = d3.svg.axis()
+    .scale(y)
+    .orient("left")
+    .ticks(11);
+
+	var line1 = d3.svg.line()
+	.interpolate("basis")
+    .x(function(d) { return x(d.Country); })
+    .y(function(d) { return y(d.SongQuality); });
+	
+var svg1 = d3.select("body").append("svg")
+    .attr("width", width + margin.left + margin.right)
+    .attr("height", height + margin.top + margin.bottom)
+	.append("g")
+    .attr("transform", "translate(" + margin.left + "," + margin.top + ")");
+
+d3.json("comparison.json", function(error, data) {
+  x.domain(data.map(function(d) { return d.Country; }));
+  y.domain([1, d3.max(data, function(d) { return d.SongQuality; })]);
+console.log(x);
+console.log(y);
+  svg1.append("g")
+      .attr("class", "x axis")
+      .attr("transform", "translate(0," + height + ")")
+      .call(xAxis);
+
+  svg1.append("g")
+      .attr("class", "y axis")
+      .call(yAxis)
+	  .append("text")
+      .attr("transform", "rotate(-90)")
+      .attr("y", -40)
+      .attr("dy", ".71em")
+      .style("text-anchor", "end")
+      .text("Song Quality");
+
+  svg1.append("text")
+        .attr("x", 200 )
+        .attr("y", height+40 )
+        .style("text-anchor", "middle")
+        .text("Country");
+		
+   svg1.append("path")
+      .datum(data)
+      .attr("class", "line")
+      .attr("d", line1);
+});
+</script>
+
+<script>
+var margin = {top: 20, right: 20, bottom: 50, left: 40},
+    width = 300 - margin.left - margin.right,
+    height = 300 - margin.top - margin.bottom;
+
+var x = d3.scale.ordinal()
+    .rangeRoundBands([0, width], .1);
+
+var y = d3.scale.linear()
+    .range([height, 0]);
+
+var xAxis = d3.svg.axis()
+    .scale(x)
+    .orient("bottom")
+	.ticks(5);
+
+var yAxis = d3.svg.axis()
+    .scale(y)
+    .orient("left")
+    .ticks(11);
+
+	var line2 = d3.svg.line()
+	.interpolate("basis")
+    .x(function(d) { return x(d.Country); })
+    .y(function(d) { return y(d.NormalizedPoints*18); });
+	
+var svg2 = d3.select("body").append("svg")
+    .attr("width", width + margin.left + margin.right)
+    .attr("height", height + margin.top + margin.bottom)
+	.append("g")
+    .attr("transform", "translate(" + margin.left + "," + margin.top + ")");
+
+d3.json("comparison.json", function(error, data) {
+  x.domain(data.map(function(d) { return d.Country; }));
+  y.domain([0.1, d3.max(data, function(d) { return d.NormalizedPoints*18; })]);
+console.log(x);
+console.log(y);
+  svg2.append("g")
+      .attr("class", "x axis")
+      .attr("transform", "translate(0," + height + ")")
+      .call(xAxis);
+
+  svg2.append("g")
+      .attr("class", "y axis")
+      .call(yAxis)
+	  .append("text")
+      .attr("transform", "rotate(-90)")
+      .attr("y", -40)
+      .attr("dy", ".71em")
+      .style("text-anchor", "end")
+      .text("Normalized Points");
+
+  svg2.append("text")
+        .attr("x", 200 )
+        .attr("y", height+40 )
+        .style("text-anchor", "middle")
+        .text("Country");
+		
+   svg2.append("path")
+      .datum(data)
+      .attr("class", "line")
+      .attr("d", line2);
+});
+</script>
+
+<script>
+var margin = {top: 20, right: 20, bottom: 50, left: 40},
+    width = 300 - margin.left - margin.right,
+    height = 300 - margin.top - margin.bottom;
+
+var x = d3.scale.ordinal()
+    .rangeRoundBands([0, width], .1);
+
+var y = d3.scale.linear()
+    .range([height, 0]);
+
+var xAxis = d3.svg.axis()
+    .scale(x)
+    .orient("bottom")
+	.ticks(5);
+
+var yAxis = d3.svg.axis()
+    .scale(y)
+    .orient("left")
+    .ticks(11);
+
+	var line3 = d3.svg.line()
+	.interpolate("basis")
+    .x(function(d) { return x(d.Country); })
+    .y(function(d) { return y(d.duration*.01); });
+	
+var svg3 = d3.select("body").append("svg")
+    .attr("width", width + margin.left + margin.right)
+    .attr("height", height + margin.top + margin.bottom)
+	.append("g")
+    .attr("transform", "translate(" + margin.left + "," + margin.top + ")");
+
+d3.json("comparison.json", function(error, data) {
+  x.domain(data.map(function(d) { return d.Country; }));
+  y.domain([1.5, d3.max(data, function(d) { return ((d.duration)*.01); })]);
+console.log(x);
+console.log(y);
+  svg3.append("g")
+      .attr("class", "x axis")
+      .attr("transform", "translate(0," + height + ")")
+      .call(xAxis);
+
+  svg3.append("g")
+      .attr("class", "y axis")
+      .call(yAxis)
+	  .append("text")
+      .attr("transform", "rotate(-90)")
+      .attr("y", -40)
+      .attr("dy", ".71em")
+      .style("text-anchor", "end")
+      .text("Song Duration");
+
+  svg3.append("text")
+        .attr("x", 200 )
+        .attr("y", height+40 )
+        .style("text-anchor", "middle")
+        .text("Country");
+		
+   svg3.append("path")
+      .datum(data)
+      .attr("class", "line")
+      .attr("d", line3);
+});
+</script>
+
+<script>
+var margin = {top: 20, right: 20, bottom: 50, left: 40},
+    width = 300 - margin.left - margin.right,
+    height = 300 - margin.top - margin.bottom;
+
+var x = d3.scale.ordinal()
+    .rangeRoundBands([0, width], .05);
+
+var y = d3.scale.linear()
+    .range([height, 0]);
+
+var xAxis = d3.svg.axis()
+    .scale(x)
+    .orient("bottom")
+	.ticks(5);
+
+var yAxis = d3.svg.axis()
+    .scale(y)
+    .orient("left")
+    .ticks(11);
+
+	var line4 = d3.svg.line()
+	.interpolate("basis")
+    .x(function(d) { return x(d.Country); })
+    .y(function(d) { return y(((d.tempo)*.01)); });
+	
+var svg4 = d3.select("body").append("svg")
+    .attr("width", width + margin.left + margin.right)
+    .attr("height", height + margin.top + margin.bottom)
+	.append("g")
+    .attr("transform", "translate(" + margin.left + "," + margin.top + ")");
+
+d3.json("comparison.json", function(error, data) {
+  x.domain(data.map(function(d) { return d.Country; }));
+  y.domain([1.05, d3.max(data, function(d) { return ((d.tempo)*.01); })]);
+console.log(x);
+console.log(y);
+  svg4.append("g")
+      .attr("class", "x axis")
+      .attr("transform", "translate(0," + height + ")")
+      .call(xAxis);
+
+  svg4.append("g")
+      .attr("class", "y axis")
+      .call(yAxis)
+	  .append("text")
+      .attr("transform", "rotate(-90)")
+      .attr("y", -40)
+      .attr("dy", ".71em")
+      .style("text-anchor", "end")
+      .text("Song Tempo");
+
+  svg4.append("text")
+        .attr("x", 200 )
+        .attr("y", height+40 )
+        .style("text-anchor", "middle")
+        .text("Country");
+		
+   svg4.append("path")
+      .datum(data)
+      .attr("class", "line")
+      .attr("d", line4);
+});
+</script>
+
+<script>
+var margin = {top: 20, right: 20, bottom: 50, left: 40},
+    width = 300 - margin.left - margin.right,
+    height = 300 - margin.top - margin.bottom;
+
+var x = d3.scale.ordinal()
+    .rangeRoundBands([0, width], .05);
+
+var y = d3.scale.linear()
+    .range([height, 0]);
+
+var xAxis = d3.svg.axis()
+    .scale(x)
+    .orient("bottom")
+	.ticks(5);
+
+var yAxis = d3.svg.axis()
+    .scale(y)
+    .orient("left")
+    .ticks(11);
+
+	var line5 = d3.svg.line()
+	.interpolate("basis")
+    .x(function(d) { return x(d.Country); })
+    .y(function(d) { return y(d.time_signature); });
+	
+var svg5 = d3.select("body").append("svg")
+    .attr("width", width + margin.left + margin.right)
+    .attr("height", height + margin.top + margin.bottom)
+	.append("g")
+    .attr("transform", "translate(" + margin.left + "," + margin.top + ")");
+
+d3.json("comparison.json", function(error, data) {
+  x.domain(data.map(function(d) { return d.Country; }));
+  y.domain([3.7, d3.max(data, function(d) { return d.time_signature; })]);
+
+  svg5.append("g")
+      .attr("class", "x axis")
+      .attr("transform", "translate(0," + height + ")")
+      .call(xAxis);
+
+  svg5.append("g")
+      .attr("class", "y axis")
+      .call(yAxis)
+	  .append("text")
+      .attr("transform", "rotate(-90)")
+      .attr("y", -40)
+      .attr("dy", ".71em")
+      .style("text-anchor", "end")
+      .text("Song Time Signature");
+
+  svg5.append("text")
+        .attr("x",200 )
+        .attr("y", height+40 )
+        .style("text-anchor", "middle")
+        .text("Country");
+		
+   svg5.append("path")
+      .datum(data)
+      .attr("class", "line")
+      .attr("d", line5);
+});
+
+</script>
